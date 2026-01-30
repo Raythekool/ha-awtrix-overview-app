@@ -1,11 +1,7 @@
 # AWTRIX Overview App 🌡️💧🔋
 
-[![GitHub Release][releases-shield]][releases]
 [![License][license-shield]](LICENSE)
 [![hacs][hacs-shield]][hacs]
-[![Project Maintenance][maintenance-shield]][maintainer]
-[![GitHub Activity][commits-shield]][commits]
-
 [![Buy Me A Coffee][coffee-shield]][coffee]
 
 A custom Home Assistant app for AWTRIX that displays temperature, humidity, and battery level on a single screen with icons and progress bar.
