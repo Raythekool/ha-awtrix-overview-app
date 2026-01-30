@@ -1,0 +1,29 @@
+{
+  "yaml.customTags": [
+    "!input",
+    "!include",
+    "!secret",
+    "!include_dir_list",
+    "!include_dir_merge_list",
+    "!include_dir_named",
+    "!include_dir_merge_named",
+    "!lambda"
+  ],
+  "yaml.schemas": {
+    "https://raw.githubusercontent.com/SchemaStore/schemastore/master/src/schemas/json/homeassistant-blueprint.json": [
+      "**/blueprints/**/*.yaml",
+      "**/*blueprint*.yaml",
+      "awtrix_*.yaml"
+    ]
+  },
+  "files.associations": {
+    "**/blueprints/**/*.yaml": "home-assistant",
+    "awtrix_*.yaml": "home-assistant"
+  },
+  "editor.formatOnSave": true,
+  "yaml.format.enable": true,
+  "[yaml]": {
+    "editor.defaultFormatter": "redhat.vscode-yaml",
+    "editor.autoIndent": "advanced"
+  }
+}
