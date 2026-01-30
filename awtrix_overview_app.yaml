@@ -1,0 +1,260 @@
+blueprint:
+  name: "AWTRIX Overview App 🌡️💧🔋"
+  description:
+    "Visualizza temperatura, umidità e batteria sul tuo AWTRIX con icone e barre colorate.\n\n
+    ## ⚠️ REQUISITI ⚠️\n
+    - Dispositivo AWTRIX 3\n
+    - Integrazione MQTT configurata\n
+    - Sensori di temperatura, umidità e batteria in Home Assistant\n\n
+    ## 📦 ICONE CONSIGLIATE\n
+    Carica queste icone sul tuo AWTRIX:\n
+    - `thermometer` - Termometro\n
+    - `water` - Goccia d'acqua\n
+    - `battery` - Batteria\n\n
+    Usa icone da [LaMetric Icons](https://developer.lametric.com/icons) o personalizzate.\n\n
+    Aggiornamenti: https://github.com/Raythekool/ha-awtrix-overview-app"
+  domain: automation
+  input:
+    awtrix:
+      name: Dispositivo AWTRIX
+      description: Seleziona il tuo dispositivo AWTRIX
+      selector:
+        device:
+          integration: mqtt
+          manufacturer: Blueforcer
+          model: AWTRIX 3
+          multiple: true
+
+    temperature_sensor:
+      name: Sensore Temperatura 🌡️
+      description: Sensore di temperatura da visualizzare
+      selector:
+        entity:
+          filter:
+            - domain: sensor
+              device_class: temperature
+
+    humidity_sensor:
+      name: Sensore Umidità 💧
+      description: Sensore di umidità da visualizzare
+      selector:
+        entity:
+          filter:
+            - domain: sensor
+              device_class: humidity
+
+    battery_sensor:
+      name: Sensore Batteria 🔋
+      description: Sensore di livello batteria da visualizzare
+      selector:
+        entity:
+          filter:
+            - domain: sensor
+              device_class: battery
+
+    display_duration:
+      name: Durata Visualizzazione ⏱️
+      description: Quanto tempo mostrare ogni valore (in secondi)
+      selector:
+        number:
+          min: 3
+          max: 60
+          unit_of_measurement: sec
+          step: 1
+          mode: slider
+      default: 7
+
+    icon_temperature:
+      name: Icona Temperatura
+      description: "Nome icona per la temperatura.\nDefault: thermometer"
+      selector:
+        text: {}
+      default: "thermometer"
+
+    icon_humidity:
+      name: Icona Umidità
+      description: "Nome icona per l'umidità.\nDefault: water"
+      selector:
+        text: {}
+      default: "water"
+
+    icon_battery:
+      name: Icona Batteria
+      description: "Nome icona per la batteria.\nDefault: battery"
+      selector:
+        text: {}
+      default: "battery"
+
+    temp_unit:
+      name: Unità Temperatura
+      description: "Unità di misura da mostrare (automatico dalle impostazioni o personalizzato)"
+      selector:
+        select:
+          options:
+            - label: "°C (Celsius)"
+              value: "°C"
+            - label: "°F (Fahrenheit)"
+              value: "°F"
+      default: "°C"
+
+    bar_position:
+      name: Posizione Barra
+      description: "Dove mostrare la barra colorata"
+      selector:
+        select:
+          options:
+            - label: "In alto"
+              value: "top"
+            - label: "In basso"
+              value: "bottom"
+      default: "bottom"
+
+    enable_rainbow:
+      name: Abilita Effetto Rainbow 🌈
+      description: Usa effetto arcobaleno per valori ottimali
+      selector:
+        boolean: {}
+      default: false
+
+mode: restart
+
+variables:
+  device_ids: !input awtrix
+  app_topic: "overview"
+  devices_topics: |
+    {%- macro get_device_topic(device_id) %}
+      {{ states((device_entities(device_id) | select('search','device_topic') | list)[0]) }}
+    {%- endmacro %}
+    {%- set ns = namespace(devices=[]) %}
+    {%- for device_id in device_ids %}
+      {%- set device=get_device_topic(device_id)|replace('','') %}
+      {% set ns.devices = ns.devices + [ device ~ '/custom/' ~ app_topic] %}
+    {%- endfor %}
+    {{ ns.devices | reject('match','unavailable') | list }}
+
+  temperature_sensor: !input temperature_sensor
+  humidity_sensor: !input humidity_sensor
+  battery_sensor: !input battery_sensor
+  display_duration: !input display_duration
+  icon_temperature: !input icon_temperature
+  icon_humidity: !input icon_humidity
+  icon_battery: !input icon_battery
+  temp_unit: !input temp_unit
+  bar_position: !input bar_position
+  enable_rainbow: !input enable_rainbow
+
+  # Get sensor values
+  temperature: "{{ states(temperature_sensor) | float(0) | round(1) }}"
+  humidity: "{{ states(humidity_sensor) | float(0) | round(0) }}"
+  battery: "{{ states(battery_sensor) | float(0) | round(0) }}"
+
+  # Temperature colors based on value
+  temp_color: |
+    {%- set temp = states(temperature_sensor) | float(0) %}
+    {%- if temp < 15 %}
+      "#0080FF"
+    {%- elif temp < 20 %}
+      "#00FF00"
+    {%- elif temp < 25 %}
+      "#90FF00"
+    {%- elif temp < 30 %}
+      "#FFA500"
+    {%- else %}
+      "#FF0000"
+    {%- endif %}
+
+  # Humidity colors based on value
+  humidity_color: |
+    {%- set hum = states(humidity_sensor) | float(0) %}
+    {%- if hum < 30 %}
+      "#FFFF00"
+    {%- elif hum < 60 %}
+      "#00FF00"
+    {%- else %}
+      "#0080FF"
+    {%- endif %}
+
+  # Battery colors and progress bar
+  battery_color: |
+    {%- set batt = states(battery_sensor) | float(0) %}
+    {%- if batt > 60 %}
+      "#00FF00"
+    {%- elif batt > 30 %}
+      "#FFFF00"
+    {%- else %}
+      "#FF0000"
+    {%- endif %}
+
+  # Build frames array for rotation
+  frames: |
+    [
+      {
+        "icon": "{{ icon_temperature }}",
+        "text": "{{ temperature }}{{ temp_unit }}",
+        "color": {{ temp_color }},
+        "duration": {{ display_duration }}
+      },
+      {
+        "icon": "{{ icon_humidity }}",
+        "text": "{{ humidity }}%",
+        "color": {{ humidity_color }},
+        "duration": {{ display_duration }}
+      },
+      {
+        "icon": "{{ icon_battery }}",
+        "text": "{{ battery }}%",
+        "color": {{ battery_color }},
+        "progress": {{ battery }},
+        "progressC": {{ battery_color }},
+        "progressBC": "#222222",
+        "duration": {{ display_duration }}
+        {%- if states(battery_sensor) | float(0) < 20 %},
+        "effect": "Fade"
+        {%- endif %}
+      }
+    ]
+
+  # Main payload with bar
+  payload: |
+    {
+      "lifetime": {{ display_duration * 3 + 10 }},
+      "lifetimeMode": 1,
+      "{% if bar_position == 'top' %}topbar{% else %}bar{% endif %}": [
+        {{ temp_color }}, {{ temp_color }}, {{ temp_color }},
+        {{ humidity_color }}, {{ humidity_color }}, {{ humidity_color }},
+        {{ battery_color }}, {{ battery_color }}
+      ],
+      "frames": {{ frames }}
+      {%- if enable_rainbow and states(temperature_sensor) | float(0) >= 20 and states(temperature_sensor) | float(0) <= 25 %},
+      "effect": "Rainbow"
+      {%- endif %}
+    }
+
+trigger:
+  - platform: state
+    entity_id: !input temperature_sensor
+    id: temp_change
+  - platform: state
+    entity_id: !input humidity_sensor
+    id: humidity_change
+  - platform: state
+    entity_id: !input battery_sensor
+    id: battery_change
+  - platform: time_pattern
+    minutes: "/5"
+    id: refresh
+
+condition:
+  - condition: template
+    value_template: "{{ has_value(temperature_sensor) and has_value(humidity_sensor) and has_value(battery_sensor) }}"
+
+action:
+  - repeat:
+      for_each: "{{ devices_topics }}"
+      sequence:
+        - service: mqtt.publish
+          data:
+            qos: 0
+            retain: false
+            topic: "{{ repeat.item }}"
+            payload: "{{ payload }}"
