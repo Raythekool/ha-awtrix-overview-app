@@ -1,12 +1,14 @@
 # AWTRIX Overview App 🌡️💧🔋
 
-![License][license-shield](LICENSE)
-![hacs][hacs-shield][hacs]
-![Buy Me A Coffee][coffee-shield]][coffee]
+[![License][license-shield]](LICENSE)
+[![HACS][hacs-shield]][hacs]
+[![Buy Me A Coffee][coffee-shield]][coffee]
+
 ![AWTRIX Overview App](https://img.shields.io/badge/AWTRIX-3-blue?style=flat-square&logo=homeassistant)
 ![Home Assistant](https://img.shields.io/badge/Home%20Assistant-Compatible-green?style=flat-square&logo=homeassistant)
 
-A custom Home Assistant app for AWTRIX that displays temperature, humidity, and battery level on a single screen with icons and progress bar.
+A custom Home Assistant app for AWTRIX that displays temperature, humidity,
+and battery level on a single screen with icons and progress bar.
 
 ## ✨ Features
 
@@ -21,17 +23,19 @@ A custom Home Assistant app for AWTRIX that displays temperature, humidity, and 
 
 ## 📸 Display Layout
 
-**Option 1: Battery Bar at Bottom**
-```
+### Option 1: Battery Bar at Bottom
+
+```text
 ┌────────────────────────────────┐
-│  🏠 22.5° 45%                  │
+│  🏠 22.5° 45%                  |
 │  ██████████████████████░░░░░░  │
 └────────────────────────────────┘
   Temp & Humidity     Battery 85%
 ```
 
-**Option 2: Battery Bar at Top**
-```
+### Option 2: Battery Bar at Top
+
+```text
 ┌────────────────────────────────┐
 │  ██████████████████████░░░░░░  │
 │  🏠 22.5° 45%                  │
@@ -47,7 +51,8 @@ A custom Home Assistant app for AWTRIX that displays temperature, humidity, and 
 2. Navigate to **Settings** → **Automations & Scenes** → **Blueprints**
 3. Click **Import Blueprint**
 4. Paste this URL:
-   ```
+
+   ```text
    https://github.com/Raythekool/ha-awtrix-overview-app/blob/main/awtrix_overview_app.yaml
    ```
 
@@ -75,34 +80,36 @@ A custom Home Assistant app for AWTRIX that displays temperature, humidity, and 
 
 ### Temperature Colors (Dynamic Mode)
 
-| Temp | Color | Status |
-|------|-------|--------|
-| < 15°C | Blue | Cold |
-| 15-20°C | Green | Cool |
+| Temp    | Color       | Status  |
+| ------- | ----------- | ------- |
+| < 15°C  | Blue        | Cold    |
+| 15-20°C | Green       | Cool    |
 | 20-25°C | Light Green | Comfort |
-| 25-30°C | Orange | Warm |
-| > 30°C | Red | Hot |
+| 25-30°C | Orange      | Warm    |
+| > 30°C  | Red         | Hot     |
 
 ### Battery Bar Colors
 
-| Level | Color | Effect |
-|-------|-------|--------|
-| > 60% | Green | None |
-| 30-60% | Yellow | None |
-| < 30% | Red | None |
-| < 20% | Red | Fade |
+| Level  | Color  | Effect |
+| ------ | ------ | ------ |
+| > 60%  | Green  | None   |
+| 30-60% | Yellow | None   |
+| < 30%  | Red    | None   |
+| < 20%  | Red    | Fade   |
 
 ## 🎨 Icons
 
 See [ICONS_UPLOAD.md](ICONS_UPLOAD.md) for detailed instructions.
 
 **Recommended icons from [LaMetric](https://developer.lametric.com/icons):**
+
 - Temperature: `2289`, `53284`
 - Humidity: `46633`, `2520`
 - Battery: `9956`, `47188`
 - Home: `2`, `19768`
 
 **Quick upload:**
+
 ```bash
 python upload_icons.py
 ```
@@ -110,16 +117,19 @@ python upload_icons.py
 ## 🐛 Troubleshooting
 
 **App not displaying:**
+
 1. Check sensors are configured
 2. Verify AWTRIX is online
 3. Check MQTT topics in Developer Tools
 
 **Icons not showing:**
+
 1. Upload icons using provided scripts
 2. Verify icon names match (case-sensitive)
 3. Check AWTRIX web interface
 
 **Colors not changing:**
+
 1. Ensure sensors return numeric values
 2. Set Text Color to "dynamic"
 
@@ -145,7 +155,7 @@ MIT License - see [LICENSE](LICENSE)
 
 ## 👨‍💻 Author
 
-**Marco Dodaro**
+### Marco Dodaro
 
 - GitHub: [@Raythekool](https://github.com/Raythekool)
 - LinkedIn: [marcododaro](https://www.linkedin.com/in/marcododaro)
@@ -155,14 +165,8 @@ MIT License - see [LICENSE](LICENSE)
 Made with ❤️ for the Home Assistant community
 
 <!-- BADGES -->
-[releases-shield]: https://img.shields.io/github/release/Raythekool/ha-awtrix-overview-app.svg?style=for-the-badge
-[releases]: https://github.com/Raythekool/ha-awtrix-overview-app/releases
-[license-shield]: https://img.shields.io/github/license/Raythekool/ha-awtrix-overview-app.svg?style=for-the-badge
-[hacs-shield]: https://img.shields.io/badge/HACS-Custom-orange.svg?style=for-the-badge
+[license-shield]: https://img.shields.io/github/license/Raythekool/ha-awtrix-overview-app.svg?style=flat-square
+[hacs-shield]: https://img.shields.io/badge/HACS-Custom-orange.svg?style=flat-square
 [hacs]: https://github.com/hacs
-[maintenance-shield]: https://img.shields.io/badge/maintainer-Marco%20Dodaro-blue.svg?style=for-the-badge
-[maintainer]: https://github.com/Raythekool
-[commits-shield]: https://img.shields.io/github/commit-activity/y/Raythekool/ha-awtrix-overview-app.svg?style=for-the-badge
-[commits]: https://github.com/Raythekool/ha-awtrix-overview-app/commits/main
-[coffee-shield]: https://img.shields.io/badge/buy%20me%20a%20coffee-donate-yellow.svg?style=for-the-badge
+[coffee-shield]: https://img.shields.io/badge/buy%20me%20a%20coffee-donate-yellow.svg?style=flat-square
 [coffee]: https://www.buymeacoffee.com/marcodod

@@ -1,6 +1,7 @@
 # 📦 Guida Caricamento Icone AWTRIX
 
-Questa guida ti spiega come caricare le icone personalizzate sul tuo dispositivo AWTRIX.
+Questa guida ti spiega come caricare le icone personalizzate sul tuo
+dispositivo AWTRIX.
 
 ## 🎨 Icone Necessarie
 
@@ -48,6 +49,7 @@ python upload_icons.py
 ```
 
 Lo script:
+
 1. Cerca tutti i file `.gif` nella cartella `icons/`
 2. Li carica automaticamente su AWTRIX
 3. Usa il nome del file come nome dell'icona
@@ -66,7 +68,9 @@ ICONS_FOLDER = "icons"        # Cartella con le icone
 Carica icone via MQTT:
 
 ```bash
-mosquitto_pub -h YOUR_MQTT_BROKER -t "awtrix_PREFIX/icon/thermometer" -m '{"base64": "BASE64_ENCODED_GIF"}'
+mosquitto_pub -h YOUR_MQTT_BROKER \
+  -t "awtrix_PREFIX/icon/thermometer" \
+  -m '{"base64": "BASE64_ENCODED_GIF"}'
 ```
 
 ### Metodo 4: HTTP API
@@ -82,7 +86,7 @@ curl -X POST "http://AWTRIX_IP/api/icon" \
 
 ## 📁 Struttura Cartelle Consigliata
 
-```
+```text
 ha-awtrix-overview-app/
 ├── icons/
 │   ├── thermometer.gif
@@ -261,4 +265,5 @@ pause
 
 ---
 
-💡 **Suggerimento**: Crea una cartella `icons/` nel repository e mantieni lì tutte le tue icone per facilitare backup e condivisione!
+💡 **Suggerimento**: Crea una cartella `icons/` nel repository e mantieni
+lì tutte le tue icone per facilitare backup e condivisione!
