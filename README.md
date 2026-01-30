@@ -1,13 +1,12 @@
 # AWTRIX Overview App 🌡️💧🔋
 
-[![License][license-shield]](LICENSE)
-[![hacs][hacs-shield]][hacs]
-[![Buy Me A Coffee][coffee-shield]][coffee]
-
-A custom Home Assistant app for AWTRIX that displays temperature, humidity, and battery level on a single screen with icons and progress bar.
-
+![License][license-shield](LICENSE)
+![hacs][hacs-shield][hacs]
+![Buy Me A Coffee][coffee-shield]][coffee]
 ![AWTRIX Overview App](https://img.shields.io/badge/AWTRIX-3-blue?style=flat-square&logo=homeassistant)
 ![Home Assistant](https://img.shields.io/badge/Home%20Assistant-Compatible-green?style=flat-square&logo=homeassistant)
+
+A custom Home Assistant app for AWTRIX that displays temperature, humidity, and battery level on a single screen with icons and progress bar.
 
 ## ✨ Features
 
