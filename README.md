@@ -4,8 +4,8 @@
 [![HACS][hacs-shield]][hacs]
 [![Buy Me A Coffee][coffee-shield]][coffee]
 
-![AWTRIX Overview App](https://img.shields.io/badge/AWTRIX-3-blue?style=flat-square&logo=homeassistant)
-![Home Assistant](https://img.shields.io/badge/Home%20Assistant-Compatible-green?style=flat-square&logo=homeassistant)
+[![AWTRIX Overview App](https://img.shields.io/badge/AWTRIX-3-blue?style=flat-square&logo=homeassistant)](https://blueforcer.github.io/awtrix3/#/)
+[![Home Assistant](https://img.shields.io/badge/Home%20Assistant-Compatible-green?style=flat-square&logo=homeassistant)](https://www.home-assistant.io/)
 
 A custom Home Assistant app for AWTRIX that displays temperature, humidity,
 and battery level on a single screen with icons and progress bar.
