@@ -1,17 +1,19 @@
 blueprint:
   name: "AWTRIX Overview App 🌡️💧🔋"
   description:
-    "Visualizza temperatura, umidità e batteria sul tuo AWTRIX con icone e barre colorate.\n\n
+    "Visualizza temperatura, umidità e batteria in un'unica schermata sul tuo AWTRIX.\n\n
     ## ⚠️ REQUISITI ⚠️\n
     - Dispositivo AWTRIX 3\n
     - Integrazione MQTT configurata\n
     - Sensori di temperatura, umidità e batteria in Home Assistant\n\n
-    ## 📦 ICONE CONSIGLIATE\n
-    Carica queste icone sul tuo AWTRIX:\n
+    ## 📊 LAYOUT\n
+    Layout su singola schermata:\n
+    - Temperatura e Umidità come testo\n
+    - Barra di progresso batteria (sopra o sotto)\n\n
+    ## 📦 ICONE OPZIONALI\n
+    Puoi aggiungere piccole icone:\n
     - `thermometer` - Termometro\n
-    - `water` - Goccia d'acqua\n
-    - `battery` - Batteria\n\n
-    Usa icone da [LaMetric Icons](https://developer.lametric.com/icons) o personalizzate.\n\n
+    - `water` - Goccia d'acqua\n\n
     Aggiornamenti: https://github.com/Raythekool/ha-awtrix-overview-app"
   domain: automation
   input:
@@ -52,42 +54,23 @@ blueprint:
             - domain: sensor
               device_class: battery
 
-    display_duration:
-      name: Durata Visualizzazione ⏱️
-      description: Quanto tempo mostrare ogni valore (in secondi)
+    show_icon:
+      name: Mostra Icona 🎨
+      description: Mostra un'icona a sinistra del testo
       selector:
-        number:
-          min: 3
-          max: 60
-          unit_of_measurement: sec
-          step: 1
-          mode: slider
-      default: 7
+        boolean: {}
+      default: false
 
-    icon_temperature:
-      name: Icona Temperatura
-      description: "Nome icona per la temperatura.\nDefault: thermometer"
+    icon_name:
+      name: Nome Icona
+      description: "Nome dell'icona da mostrare (se abilitata sopra).\nEsempio: thermometer, home, weather"
       selector:
         text: {}
-      default: "thermometer"
-
-    icon_humidity:
-      name: Icona Umidità
-      description: "Nome icona per l'umidità.\nDefault: water"
-      selector:
-        text: {}
-      default: "water"
-
-    icon_battery:
-      name: Icona Batteria
-      description: "Nome icona per la batteria.\nDefault: battery"
-      selector:
-        text: {}
-      default: "battery"
+      default: "home"
 
     temp_unit:
       name: Unità Temperatura
-      description: "Unità di misura da mostrare (automatico dalle impostazioni o personalizzato)"
+      description: "Unità di misura da mostrare"
       selector:
         select:
           options:
@@ -95,26 +78,53 @@ blueprint:
               value: "°C"
             - label: "°F (Fahrenheit)"
               value: "°F"
+            - label: "° (solo simbolo)"
+              value: "°"
       default: "°C"
 
     bar_position:
-      name: Posizione Barra
-      description: "Dove mostrare la barra colorata"
+      name: Posizione Barra Batteria
+      description: "Dove mostrare la barra di progresso della batteria"
       selector:
         select:
           options:
-            - label: "In alto"
+            - label: "In alto (top bar)"
               value: "top"
-            - label: "In basso"
+            - label: "In basso (bottom bar)"
               value: "bottom"
       default: "bottom"
 
-    enable_rainbow:
-      name: Abilita Effetto Rainbow 🌈
-      description: Usa effetto arcobaleno per valori ottimali
+    text_color:
+      name: Colore Testo
+      description: "Colore del testo (se vuoi colore fisso invece di dinamico)"
       selector:
-        boolean: {}
-      default: false
+        select:
+          options:
+            - label: "Dinamico (cambia in base ai valori)"
+              value: "dynamic"
+            - label: "Bianco"
+              value: "#FFFFFF"
+            - label: "Verde"
+              value: "#00FF00"
+            - label: "Blu"
+              value: "#0080FF"
+            - label: "Giallo"
+              value: "#FFFF00"
+            - label: "Arancione"
+              value: "#FFA500"
+      default: "dynamic"
+
+    refresh_interval:
+      name: Intervallo Aggiornamento ⏱️
+      description: Aggiorna i dati ogni X minuti (oltre agli aggiornamenti automatici)
+      selector:
+        number:
+          min: 1
+          max: 60
+          unit_of_measurement: min
+          step: 1
+          mode: slider
+      default: 5
 
 mode: restart
 
@@ -135,46 +145,37 @@ variables:
   temperature_sensor: !input temperature_sensor
   humidity_sensor: !input humidity_sensor
   battery_sensor: !input battery_sensor
-  display_duration: !input display_duration
-  icon_temperature: !input icon_temperature
-  icon_humidity: !input icon_humidity
-  icon_battery: !input icon_battery
+  show_icon: !input show_icon
+  icon_name: !input icon_name
   temp_unit: !input temp_unit
   bar_position: !input bar_position
-  enable_rainbow: !input enable_rainbow
+  text_color: !input text_color
 
   # Get sensor values
   temperature: "{{ states(temperature_sensor) | float(0) | round(1) }}"
   humidity: "{{ states(humidity_sensor) | float(0) | round(0) }}"
   battery: "{{ states(battery_sensor) | float(0) | round(0) }}"
 
-  # Temperature colors based on value
-  temp_color: |
-    {%- set temp = states(temperature_sensor) | float(0) %}
-    {%- if temp < 15 %}
-      "#0080FF"
-    {%- elif temp < 20 %}
-      "#00FF00"
-    {%- elif temp < 25 %}
-      "#90FF00"
-    {%- elif temp < 30 %}
-      "#FFA500"
+  # Dynamic text color based on temperature (if dynamic selected)
+  display_color: |
+    {%- if text_color == 'dynamic' %}
+      {%- set temp = states(temperature_sensor) | float(0) %}
+      {%- if temp < 15 %}
+        "#0080FF"
+      {%- elif temp < 20 %}
+        "#00FF00"
+      {%- elif temp < 25 %}
+        "#90FF00"
+      {%- elif temp < 30 %}
+        "#FFA500"
+      {%- else %}
+        "#FF0000"
+      {%- endif %}
     {%- else %}
-      "#FF0000"
+      "{{ text_color }}"
     {%- endif %}
 
-  # Humidity colors based on value
-  humidity_color: |
-    {%- set hum = states(humidity_sensor) | float(0) %}
-    {%- if hum < 30 %}
-      "#FFFF00"
-    {%- elif hum < 60 %}
-      "#00FF00"
-    {%- else %}
-      "#0080FF"
-    {%- endif %}
-
-  # Battery colors and progress bar
+  # Battery progress bar color
   battery_color: |
     {%- set batt = states(battery_sensor) | float(0) %}
     {%- if batt > 60 %}
@@ -185,48 +186,30 @@ variables:
       "#FF0000"
     {%- endif %}
 
-  # Build frames array for rotation
-  frames: |
-    [
-      {
-        "icon": "{{ icon_temperature }}",
-        "text": "{{ temperature }}{{ temp_unit }}",
-        "color": {{ temp_color }},
-        "duration": {{ display_duration }}
-      },
-      {
-        "icon": "{{ icon_humidity }}",
-        "text": "{{ humidity }}%",
-        "color": {{ humidity_color }},
-        "duration": {{ display_duration }}
-      },
-      {
-        "icon": "{{ icon_battery }}",
-        "text": "{{ battery }}%",
-        "color": {{ battery_color }},
-        "progress": {{ battery }},
-        "progressC": {{ battery_color }},
-        "progressBC": "#222222",
-        "duration": {{ display_duration }}
-        {%- if states(battery_sensor) | float(0) < 20 %},
-        "effect": "Fade"
-        {%- endif %}
-      }
-    ]
+  # Build text: "22.5° 45%" or with icon
+  display_text: "{{ temperature }}{{ temp_unit }} {{ humidity }}%"
 
-  # Main payload with bar
+  # Main payload
   payload: |
     {
-      "lifetime": {{ display_duration * 3 + 10 }},
-      "lifetimeMode": 1,
-      "{% if bar_position == 'top' %}topbar{% else %}bar{% endif %}": [
-        {{ temp_color }}, {{ temp_color }}, {{ temp_color }},
-        {{ humidity_color }}, {{ humidity_color }}, {{ humidity_color }},
-        {{ battery_color }}, {{ battery_color }}
-      ],
-      "frames": {{ frames }}
-      {%- if enable_rainbow and states(temperature_sensor) | float(0) >= 20 and states(temperature_sensor) | float(0) <= 25 %},
-      "effect": "Rainbow"
+      {%- if show_icon %}
+      "icon": "{{ icon_name }}",
+      {%- endif %}
+      "text": "{{ display_text }}",
+      "color": {{ display_color }},
+      {%- if bar_position == 'top' %}
+      "topbar": {
+        "value": {{ battery }},
+        "color": {{ battery_color }},
+        "backgroundColor": "#222222"
+      }
+      {%- else %}
+      "progress": {{ battery }},
+      "progressC": {{ battery_color }},
+      "progressBC": "#222222"
+      {%- endif %}
+      {%- if states(battery_sensor) | float(0) < 20 %},
+      "effect": "Fade"
       {%- endif %}
     }
 
@@ -241,7 +224,7 @@ trigger:
     entity_id: !input battery_sensor
     id: battery_change
   - platform: time_pattern
-    minutes: "/5"
+    minutes: "/{{ refresh_interval }}"
     id: refresh
 
 condition:
