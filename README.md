@@ -1,151 +1,173 @@
 # AWTRIX Overview App 🌡️💧🔋
 
-App personalizzata per AWTRIX che visualizza temperatura, umidità e livello batteria da sensori di Home Assistant con icone e barra di progressione.
+[![GitHub Release][releases-shield]][releases]
+[![License][license-shield]](LICENSE)
+[![hacs][hacs-shield]][hacs]
+[![Project Maintenance][maintenance-shield]][maintainer]
+[![GitHub Activity][commits-shield]][commits]
 
-## 📋 Caratteristiche
+[![Buy Me A Coffee][coffee-shield]][coffee]
 
-- **Temperatura** con icona termometro
-- **Umidità** con icona goccia d'acqua
-- **Batteria** con barra di progresso e colore dinamico
-- Rotazione automatica tra i valori
-- Colori dinamici basati sui livelli
-- Supporto multipli dispositivi AWTRIX
+A custom Home Assistant app for AWTRIX that displays temperature, humidity, and battery level on a single screen with icons and progress bar.
 
-## 🎨 Icone Consigliate
+![AWTRIX Overview App](https://img.shields.io/badge/AWTRIX-3-blue?style=flat-square&logo=homeassistant)
+![Home Assistant](https://img.shields.io/badge/Home%20Assistant-Compatible-green?style=flat-square&logo=homeassistant)
 
-Ti consiglio di caricare queste icone sul tuo AWTRIX:
+## ✨ Features
 
-- `thermometer` - Termometro per temperatura
-- `water` - Goccia d'acqua per umidità  
-- `battery` - Batteria
+- 🌡️ **Temperature** display with dynamic colors
+- 💧 **Humidity** percentage
+- 🔋 **Battery** level with progress bar
+- 🎨 Color-coded values based on thresholds
+- 📊 All data visible on a single screen (no rotation)
+- 🎭 Optional icon support
+- ⚡ Low battery warning with fade effect
+- 🔄 Auto-refresh on sensor changes
 
-Puoi usare icone da [https://developer.lametric.com/icons](https://developer.lametric.com/icons) o crearne di personalizzate.
+## 📸 Display Layout
 
-### Come caricare le icone
+**Option 1: Battery Bar at Bottom**
+```
+┌────────────────────────────────┐
+│  🏠 22.5° 45%                  │
+│  ██████████████████████░░░░░░  │
+└────────────────────────────────┘
+  Temp & Humidity     Battery 85%
+```
 
-Vedi il file [ICONS_UPLOAD.md](ICONS_UPLOAD.md) per istruzioni dettagliate sul caricamento delle icone.
+**Option 2: Battery Bar at Top**
+```
+┌────────────────────────────────┐
+│  ██████████████████████░░░░░░  │
+│  🏠 22.5° 45%                  │
+└────────────────────────────────┘
+  Battery 85%         Temp & Humidity
+```
 
-## 🚀 Installazione
+## 🚀 Installation
 
-### Metodo 1: Importa Blueprint (Consigliato)
+### Import Blueprint
 
-1. Vai su Home Assistant
-2. Vai in **Impostazioni** → **Automazioni e Scene** → **Blueprint**
-3. Clicca su **Importa Blueprint**
-4. Incolla questo URL:
+1. Go to Home Assistant
+2. Navigate to **Settings** → **Automations & Scenes** → **Blueprints**
+3. Click **Import Blueprint**
+4. Paste this URL:
    ```
-   https://raw.githubusercontent.com/Raythekool/ha-awtrix-overview-app/main/awtrix_overview_app.yaml
+   https://github.com/Raythekool/ha-awtrix-overview-app/blob/main/awtrix_overview_app.yaml
    ```
-5. Clicca su **Anteprima** e poi **Importa**
 
-### Metodo 2: Copia Manuale
+[![Open your Home Assistant instance and show the blueprint import dialog.](https://my.home-assistant.io/badges/blueprint_import.svg)](https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=https%3A%2F%2Fgithub.com%2FRaythekool%2Fha-awtrix-overview-app%2Fblob%2Fmain%2Fawtrix_overview_app.yaml)
 
-1. Scarica il file `awtrix_overview_app.yaml`
-2. Copia il contenuto nel tuo file `automations.yaml` o crea una nuova automazione
-3. Ricarica le automazioni
+## ⚙️ Configuration
 
-## ⚙️ Configurazione
+### Required Parameters
 
-Dopo l'importazione, crea una nuova automazione dal blueprint:
+- **AWTRIX Device**: Your AWTRIX 3 device(s)
+- **Temperature Sensor**: e.g., `sensor.living_room_temperature`
+- **Humidity Sensor**: e.g., `sensor.living_room_humidity`
+- **Battery Sensor**: e.g., `sensor.phone_battery_level`
 
-1. Vai in **Impostazioni** → **Automazioni e Scene**
-2. Clicca su **Crea automazione** → **Inizia da un blueprint**
-3. Seleziona **AWTRIX Overview App**
-4. Configura i parametri:
+### Optional Parameters
 
-### Parametri Principali
+- **Show Icon**: Display icon on the left (default: `false`)
+- **Icon Name**: Icon to display (default: `home`)
+- **Temperature Unit**: °C, °F, or ° (default: `°C`)
+- **Bar Position**: top or bottom (default: `bottom`)
+- **Text Color**: dynamic or fixed color (default: `dynamic`)
+- **Refresh Interval**: 1-60 minutes (default: `5`)
 
-- **Dispositivo AWTRIX**: Seleziona uno o più dispositivi AWTRIX
-- **Sensore Temperatura**: Il tuo sensore di temperatura (es. `sensor.temperature_living_room`)
-- **Sensore Umidità**: Il tuo sensore di umidità (es. `sensor.humidity_living_room`)
-- **Sensore Batteria**: Il tuo sensore di batteria (es. `sensor.phone_battery_level`)
-- **Durata visualizzazione**: Quanto tempo mostrare ogni valore (default: 7 secondi)
+## 🎨 Color Schemes
 
-### Personalizzazione Icone
+### Temperature Colors (Dynamic Mode)
 
-- **Icona Temperatura**: Nome dell'icona per la temperatura (default: `thermometer`)
-- **Icona Umidità**: Nome dell'icona per l'umidità (default: `water`)
-- **Icona Batteria**: Nome dell'icona per la batteria (default: `battery`)
+| Temp | Color | Status |
+|------|-------|--------|
+| < 15°C | Blue | Cold |
+| 15-20°C | Green | Cool |
+| 20-25°C | Light Green | Comfort |
+| 25-30°C | Orange | Warm |
+| > 30°C | Red | Hot |
 
-### Soglie e Colori
+### Battery Bar Colors
 
-Puoi personalizzare le soglie per i colori:
+| Level | Color | Effect |
+|-------|-------|--------|
+| > 60% | Green | None |
+| 30-60% | Yellow | None |
+| < 30% | Red | None |
+| < 20% | Red | Fade |
 
-**Temperatura:**
-- Sotto 15°C: Blu freddo
-- 15-25°C: Verde confortevole  
-- Sopra 25°C: Arancione/Rosso caldo
+## 🎨 Icons
 
-**Umidità:**
-- Sotto 30%: Giallo (troppo secco)
-- 30-60%: Verde (ottimale)
-- Sopra 60%: Blu (troppo umido)
+See [ICONS_UPLOAD.md](ICONS_UPLOAD.md) for detailed instructions.
 
-**Batteria:**
-- Sopra 60%: Verde
-- 30-60%: Giallo
-- Sotto 30%: Rosso + effetto lampeggiante
+**Recommended icons from [LaMetric](https://developer.lametric.com/icons):**
+- Temperature: `2289`, `53284`
+- Humidity: `46633`, `2520`
+- Battery: `9956`, `47188`
+- Home: `2`, `19768`
 
-## 📊 Formato Display
+**Quick upload:**
+```bash
+python upload_icons.py
+```
 
-L'app mostra i dati in rotazione:
+## 🐛 Troubleshooting
 
-1. **Temperatura**: `🌡️ 22.5°C` (con barra colorata in alto/basso)
-2. **Umidità**: `💧 45%` (con barra colorata)
-3. **Batteria**: `🔋 85%` (con barra di progresso)
+**App not displaying:**
+1. Check sensors are configured
+2. Verify AWTRIX is online
+3. Check MQTT topics in Developer Tools
 
-Ogni schermata viene visualizzata per il tempo configurato (default 7 secondi).
+**Icons not showing:**
+1. Upload icons using provided scripts
+2. Verify icon names match (case-sensitive)
+3. Check AWTRIX web interface
 
-## 🔄 Aggiornamenti
+**Colors not changing:**
+1. Ensure sensors return numeric values
+2. Set Text Color to "dynamic"
 
-L'app si aggiorna automaticamente quando:
-- Il valore della temperatura cambia
-- Il valore dell'umidità cambia  
-- Il livello della batteria cambia
+## 🤝 Contributing
 
-## 🛠️ Troubleshooting
+Contributions, issues, and feature requests are welcome!
 
-### L'app non si visualizza
+## ⭐ Support
 
-1. Verifica che i sensori siano configurati correttamente
-2. Controlla che il dispositivo AWTRIX sia online
-3. Verifica i topic MQTT in Developer Tools → MQTT
+Give a ⭐️ if this project helped you!
 
-### Le icone non si vedono
+[![Buy Me A Coffee][coffee-shield]][coffee]
 
-1. Carica le icone sul tuo AWTRIX usando gli script forniti
-2. Verifica che i nomi delle icone corrispondano a quelli configurati
-3. Consulta [ICONS_UPLOAD.md](ICONS_UPLOAD.md)
+## 📄 License
 
-### I colori non cambiano
+MIT License - see [LICENSE](LICENSE)
 
-1. Verifica che i sensori restituiscano valori numerici
-2. Controlla le soglie configurate nel blueprint
+## 🔗 Links
 
-## 📝 Note
-
-- L'app usa il topic MQTT `overview` per default
-- Puoi avere multiple istanze cambiando il nome dell'app
-- La barra di progresso funziona meglio con valori 0-100
-
-## 🤝 Contributi
-
-Contributi, issue e feature request sono benvenuti!
-
-## 📄 Licenza
-
-MIT License - vedi file [LICENSE](LICENSE)
-
-## 🔗 Link Utili
-
-- [AWTRIX Documentation](https://blueforcer.github.io/awtrix3/)
+- [AWTRIX 3 Documentation](https://blueforcer.github.io/awtrix3/)
 - [Home Assistant](https://www.home-assistant.io/)
 - [LaMetric Icons](https://developer.lametric.com/icons)
 
-## 👨‍💻 Autore
+## 👨‍💻 Author
 
-**Marco Dodaro** - [@Raythekool](https://github.com/Raythekool)
+**Marco Dodaro**
+
+- GitHub: [@Raythekool](https://github.com/Raythekool)
+- LinkedIn: [marcododaro](https://www.linkedin.com/in/marcododaro)
 
 ---
 
-⭐ Se ti piace questo progetto, lascia una stella su GitHub!
+Made with ❤️ for the Home Assistant community
+
+<!-- BADGES -->
+[releases-shield]: https://img.shields.io/github/release/Raythekool/ha-awtrix-overview-app.svg?style=for-the-badge
+[releases]: https://github.com/Raythekool/ha-awtrix-overview-app/releases
+[license-shield]: https://img.shields.io/github/license/Raythekool/ha-awtrix-overview-app.svg?style=for-the-badge
+[hacs-shield]: https://img.shields.io/badge/HACS-Custom-orange.svg?style=for-the-badge
+[hacs]: https://github.com/hacs
+[maintenance-shield]: https://img.shields.io/badge/maintainer-Marco%20Dodaro-blue.svg?style=for-the-badge
+[maintainer]: https://github.com/Raythekool
+[commits-shield]: https://img.shields.io/github/commit-activity/y/Raythekool/ha-awtrix-overview-app.svg?style=for-the-badge
+[commits]: https://github.com/Raythekool/ha-awtrix-overview-app/commits/main
+[coffee-shield]: https://img.shields.io/badge/buy%20me%20a%20coffee-donate-yellow.svg?style=for-the-badge
+[coffee]: https://www.buymeacoffee.com/marcodod
